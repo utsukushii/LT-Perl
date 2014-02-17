@@ -54,6 +54,7 @@ I have only tested this in the following environment:
 
 ## Changelog
 
+ * 0.0.2 -- Added codemirror code.
  * 0.0.1 -- Initial version with basic REPL and watches.
 
 ###License
