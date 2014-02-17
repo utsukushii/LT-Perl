@@ -1,0 +1,14 @@
+{:+ {:app [(:lt.objs.plugins/load-js ["codemirror/perl.js" "perl_compiled.js" ])]
+     :clients []
+     :editor.perl [:lt.objs.langs.perl/perl-exception :lt.objs.langs.perl/on-eval
+                    ; :lt.objs.langs.perl/eval-on-change
+                     :lt.objs.langs.perl/on-eval.one
+                     :lt.objs.langs.perl/perl-result
+                     :lt.objs.langs.perl/perl-success
+                     :lt.objs.langs.perl/perl-printer
+                     :lt.objs.langs.perl/perl-watch
+                     :lt.objs.langs.perl/perl-image
+                     :lt.objs.langs.perl/watch-src
+                     [:lt.object/add-tag :watchable]]
+     :files [(:lt.objs.files/file-types [{:name "Perl" :exts [:pl :pm] :mime "text/x-perl" :tags [:editor.perl]}])]
+     :perl.lang [:lt.objs.langs.perl/eval! :lt.objs.langs.perl/connect]}}
