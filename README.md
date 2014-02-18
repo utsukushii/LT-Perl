@@ -3,6 +3,7 @@
 This plugin for [Light Table](http://www.lighttable.com) implements the following features for the Perl language:
 
   * REPL (Read Eval Print Loop) - The result of evaling a Perl expression gets placed to the right of your code.
+  * Instarepl (Instant Read Eval Print Loop) - The code is evaluated as you type. 
   * Watches - You can expose variables used to compute an expression.
 
 ## Installation
@@ -35,6 +36,13 @@ If you want to see the results of evaling your Perl expressions then do the foll
   1. Run the `Connect: Add connection` command and select the Perl client. The plugin will prompt you to select the directory where your Perl project is located.
   2. Press `cntrl/cmd-shift-enter` to evaluate the file.
 
+### Instarepl
+
+If you want to just type your code and have it eval as you type then do the following:
+
+  1. Run the `Connect: Add connection` command and select the Perl client. The plugin will prompt you to select the directory where your Perl project is located.
+  2. Run the `Perl: Toggle instarepl mode` command.
+
 ### Watches
 
 If you want to see the value of variables used in an expression then you can setup some watches to view them; however, you can only place watches where a function call could also be placed.
@@ -54,6 +62,7 @@ I have only tested this in the following environment:
 
 ## Changelog
 
+ * 0.0.4 -- Added instarepl.
  * 0.0.3 -- Bump version.
  * 0.0.2 -- Added codemirror code.
  * 0.0.1 -- Initial version with basic REPL and watches.

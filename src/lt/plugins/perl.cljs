@@ -26,6 +26,7 @@
 
 (def shell (load/node-module "shelljs"))
 (def perl-path (files/join plugins/*plugin-dir* "perl-src/ltrepl.pl"))
+(def liveness (atom { :live false }))
 
 (behavior ::on-out
                   :triggers #{:proc.out}
@@ -173,11 +174,11 @@
 
 (behavior ::eval-on-change
           :triggers #{:change}
-          :desc "Editor: Eval when the editor changes"
-          :type :user
           :debounce 300
           :reaction (fn [this]
-                      (object/raise this :eval)))
+                        (if (:live @liveness)
+                          (do
+                            (object/raise this :eval true)))))
 
 (behavior ::on-eval
                   :triggers #{:eval}
@@ -257,7 +258,7 @@
                               (let [{:keys [info origin]} event
                                     client (-> @origin :client :default)]
                                 (notifos/working "")
-                                (object/raise this :clear!)
+                                (cmd/exec! :clear-inline-results)
                                 (clients/send (eval/get-client! {:command :editor.eval.perl
                                                                  :origin origin
                                                                  :info info
@@ -292,3 +293,11 @@
                   :exclusive true
                   :reaction (fn [this exe]
                               (object/merge! perl {:perl-exe exe})))
+
+(cmd/command {:command :instarepl.toggle-live
+              :desc "Perl: Toggle instarepl mode"
+              :exec (fn [this]
+                          (if (:live @liveness)
+                            (swap! liveness conj {:live false})
+                            (swap! liveness conj {:live true})))})
+
