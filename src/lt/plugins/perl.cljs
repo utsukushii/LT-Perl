@@ -258,10 +258,6 @@
                               (let [{:keys [info origin]} event
                                     client (-> @origin :client :default)]
                                 (notifos/working "")
-                                (if (:live @liveness)
-                                  (cmd/exec! :clear-inline-results)
-                                  (object/raise this :clear!)
-                                  )
                                 (clients/send (eval/get-client! {:command :editor.eval.perl
                                                                  :origin origin
                                                                  :info info

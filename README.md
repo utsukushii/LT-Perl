@@ -60,8 +60,6 @@ If you want to see the value of variables used in an expression then you can set
 
 To remove a watch, just place your cursor over it and press `alt-shift-w`.
 
-Note, that watches don't appear to work with the instarepl. They work well with the normal repl.
-
 ## Caveats
 
 I have only tested this in the following environment:
@@ -72,13 +70,18 @@ I have only tested this in the following environment:
 
 ## Changelog
 
+ * 0.0.6 -- BUGFIX: Watches now work in the instarepl.
  * 0.0.5 -- BUGFIX: Watches were broken.
  * 0.0.4 -- Added instarepl.
  * 0.0.3 -- Bump version.
  * 0.0.2 -- Added codemirror code.
  * 0.0.1 -- Initial version with basic REPL and watches.
 
-###License
+## Credits
+
+This plugin was heavily inspired-by/copied-from the Python and Ruby Instarepl plugins.
+
+## License
 
 Copyright (C) 2014 utsukushii
 
