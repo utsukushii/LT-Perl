@@ -174,7 +174,7 @@
 
 (behavior ::eval-on-change
           :triggers #{:change}
-          :debounce 300
+          :debounce 800
           :reaction (fn [this]
                         (if (:live @liveness)
                           (do
