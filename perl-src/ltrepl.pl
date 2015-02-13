@@ -30,10 +30,13 @@ sub close_stdout_stderr {
 sub get_forms
 # Purpose:  "parse" the code with PPI and return a list of "forms" that
 #           we can later eval individually with the repl.
-# Input:    A PPI object.
+# Input:    A string of forms.
 # Output:   An array of forms.
 {
-  my ( $ppi_obj ) = @_;
+  my ( $code ) = @_;
+
+  my $ppi_obj   = PPI::Document->new(\$code);
+  $ppi_obj->index_locations;
 
   my @forms = ();
   my @elems = $ppi_obj->elements;
@@ -152,11 +155,27 @@ sub handle_form
 
   my ($stdout, $stderr) = ("", "");
   redirect_stdout_stderr(\$stdout, \$stderr);
-  my @results   = $repl_obj->formatted_eval($form);
+
+  my @results = ();
+  my $compiled = $repl_obj->compile($form);
+
+  if (defined($compiled) and not $repl_obj->is_error($compiled)) {
+    @results = $repl_obj->format($repl_obj->execute($compiled));
+  } else {
+    @results = $repl_obj->format($compiled);
+  }
+
   close_stdout_stderr();
 
   my $result    = get_result(@results);
   my $send      = $form_hr->{send};
+
+  # When a compilation error occurs the repl eval returns an incorrect 
+  # line number so fix it with the real line number.
+  if ($repl_obj->is_error($compiled)) {
+	my $line_number = ++$start;
+    $result =~ s/line (\d+)\./line $line_number./g;
+  }
 
   next unless $send;
 
@@ -199,9 +218,7 @@ sub handle_request
   my $code      = $ref->[2]->{'code'};
   my $name      = $ref->[2]->{'name'};
   my $path      = $ref->[2]->{'path'};
-  my $ppi_obj   = PPI::Document->new(\$code);
-  $ppi_obj->index_locations;
-  my @raw_forms = get_forms( $ppi_obj );
+  my @raw_forms = get_forms( $code );
   my @forms     = reorder_forms( @raw_forms );
 
   unshift @forms, { form => get_init_code($port), send => 0};

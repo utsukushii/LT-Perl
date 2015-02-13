@@ -70,6 +70,7 @@ I have only tested this in the following environment:
 
 ## Changelog
 
+ * 0.0.8 -- BUGFIX: Compilation errors produced the wrong line number.
  * 0.0.7 -- BUGFIX: Increased debounce for a smoother instarepl experience.
  * 0.0.6 -- BUGFIX: Watches now work in the instarepl.
  * 0.0.5 -- BUGFIX: Watches were broken.
