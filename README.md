@@ -49,7 +49,7 @@ If you want to see the results of evaling your Perl expressions then do the foll
 If you want to just type your code and have it eval as you type then do the following:
 
   1. Run the `Connect: Add connection` command and select the Perl client. The plugin will prompt you to select the directory where your Perl project is located.
-  2. Run the `Perl: Toggle instarepl mode` command.
+  2. Run the `Perl: Toggle instarepl mode` command. This command will also add a toggle button labeled "live" in the upper right corner of the screen. You can click this button to toggle the live mode on or off.
 
 ### Watches
 
@@ -70,6 +70,8 @@ I have only tested this in the following environment:
 
 ## Changelog
 
+ * 0.1.0 -- A "live" toggle button is now shown when the "toggle instarepl mode" command is run.
+ * 0.0.9 -- Added .gitignore.
  * 0.0.8 -- BUGFIX: Compilation errors produced the wrong line number.
  * 0.0.7 -- BUGFIX: Increased debounce for a smoother instarepl experience.
  * 0.0.6 -- BUGFIX: Watches now work in the instarepl.

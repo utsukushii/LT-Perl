@@ -3,10 +3,12 @@
             [lt.objs.eval :as eval]
             [lt.objs.console :as console]
             [lt.objs.command :as cmd]
+            [lt.util.dom :as dom]
             [lt.objs.clients.tcp :as tcp]
             [lt.objs.sidebar.clients :as scl]
             [lt.objs.dialogs :as dialogs]
             [lt.objs.files :as files]
+            [lt.objs.editor.pool :as pool]
             [lt.objs.popup :as popup]
             [lt.objs.platform :as platform]
             [lt.objs.editor :as ed]
@@ -26,7 +28,7 @@
 
 (def shell (load/node-module "shelljs"))
 (def perl-path (files/join plugins/*plugin-dir* "perl-src/ltrepl.pl"))
-(def liveness (atom { :live false }))
+(def liveness (atom {}))
 
 (behavior ::on-out
                   :triggers #{:proc.out}
@@ -176,9 +178,13 @@
           :triggers #{:change}
           :debounce 800
           :reaction (fn [this]
-                        (if (:live @liveness)
-                          (do
-                            (object/raise this :eval true)))))
+                        (let [editor           (pool/last-active)
+                              frame-number     (get-frame-index editor)
+                              frame-number-kw  (keyword (str frame-number))]
+                          (if (contains? @liveness frame-number-kw)
+                            (if (frame-number-kw @liveness)
+                              (do
+                                (object/raise this :eval true)))))))
 
 (behavior ::on-eval
                   :triggers #{:eval}
@@ -293,10 +299,64 @@
                   :reaction (fn [this exe]
                               (object/merge! perl {:perl-exe exe})))
 
-(cmd/command {:command :instarepl.toggle-live
+(defn get-frame
+  "Get the browser's frame object from the editor object."
+  [editor]
+  (let [editor-content (object/->content editor)
+        frame          (dom/parent editor-content)]
+    frame))
+
+(defn get-frame-index
+  "Get the browser's current frame number from the editor object."
+  [editor]
+  (let [frame          (get-frame editor)
+        frame-number   (dom/index frame)]
+    frame-number))
+
+(defui live-toggler [this]
+  [:div.perl-toggle.live "live"]
+  :click (fn [e]
+           (dom/prevent e)
+           (dom/toggle-class (dom/$ ".perl-toggle.live" (get-frame (pool/last-active))) "off")
+           (object/raise (pool/last-active) :live.toggle!)))
+
+(object/object* ::live-toggler
+                :tags #{::live-toggler}
+                :name "Live Mode Toggler"
+                :init (fn [this editor]
+                        (let [frame        (get-frame editor)
+                              frame-number (get-frame-index editor)
+                              toggler      (live-toggler this)]
+                          (dom/append frame toggler))))
+
+(behavior ::live-toggle
+          :triggers #{:live.toggle!}
+          :reaction (fn [editor]
+                      (let [frame-number     (get-frame-index editor)
+                            frame-number-kw  (keyword (str frame-number))
+                            ;_               (console/log (str "{behavior} Frame: " frame-number))
+                            ]
+                        (if-not (contains? @liveness frame-number-kw)
+                          (do
+                            (swap! liveness conj {frame-number-kw false})
+                            (object/create ::live-toggler editor)))
+                        (if (frame-number-kw @liveness)
+                            (swap! liveness conj {frame-number-kw false})
+                            (swap! liveness conj {frame-number-kw true}))
+                        (ed/focus editor))))
+
+(cmd/command {:command :perl.toggle-live
               :desc "Perl: Toggle instarepl mode"
               :exec (fn [this]
-                          (if (:live @liveness)
-                            (swap! liveness conj {:live false})
-                            (swap! liveness conj {:live true})))})
+                        (let [editor (pool/last-active)]
+                          (dom/toggle-class (dom/$ ".perl-toggle.live" (get-frame editor)) "off")
+                          (object/raise editor :live.toggle!)))})
+
+
+
+
+
+
+
+
 

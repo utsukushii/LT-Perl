@@ -1,0 +1,26 @@
+.perl-toggle {
+  position: absolute !important;
+  cursor: default;
+  top: 10px !important;
+  right: 20px !important;
+  height: 25px !important;
+  width:  41px !important;
+  border-radius: 2px !important;
+  padding: 3px 8px;
+  z-index: 10;
+}
+
+.live {
+  color: #c7e6ff;
+  background-color: #505d6b;
+}
+
+.off {
+  color: #aaa !important;
+  background-color: #3b3f41 !important;
+}
+
+.off:hover {
+  color: #555 !important;
+  background: #ccc !important;
+}
